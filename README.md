@@ -42,7 +42,7 @@ Here is an example for a docker-compose.yml file:
 version: '2.0'
 
 services:
-  aisfin:
+  weather-fmi:
     image: ghcr.io/sgofferj/tak-feeder-weather-fmi:latest
     restart: always
     networks:
