@@ -7,10 +7,10 @@ import pytak
 import getfmi as fmi
 
 COT_URL = os.getenv("COT_URL")
-TAK_PROTO = os.getenv("TAK_PROTO",0)
+TAK_PROTO = os.getenv("TAK_PROTO","0")
 PYTAK_TLS_CLIENT_CERT = os.getenv("PYTAK_TLS_CLIENT_CERT")
 PYTAK_TLS_CLIENT_KEY = os.getenv("PYTAK_TLS_CLIENT_KEY")
-PYTAK_TLS_DONT_VERIFY = os.getenv("PYTAK_TLS_DONT_VERIFY",1)
+PYTAK_TLS_DONT_VERIFY = os.getenv("PYTAK_TLS_DONT_VERIFY","1")
 
 def weather2cot(sensor):
     uid = f"fmisensor.{sensor["id"]}"
@@ -43,6 +43,7 @@ def weather2cot(sensor):
         remarks.text += f"\nWind speed: {sensor["ws"]}m/s"
     if not math.isnan(sensor["wd"]):
         remarks.text += f"\nWind direction: {sensor["wd"]}°"
+    remarks.text += "\n#weather"
 
     detail = ET.Element("detail")
     detail.append(contact)
@@ -65,10 +66,9 @@ class sendWeather(pytak.QueueWorker):
         while 1:
             data = bytes()
             sensors = fmi.getweather()
-            print(sensors)
             for sensor in sensors:
                 data += weather2cot(sensor)
-            self._logger.info("Sent:\n%s\n", data.decode())
+#            self._logger.info("Sent:\n%s\n", data.decode())
             await self.handle_data(data)
             await asyncio.sleep(60)
 
