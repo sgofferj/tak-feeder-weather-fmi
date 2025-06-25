@@ -1,0 +1,5 @@
+fmiopendata
+asyncio
+pytak
+pytak[with_crypto]
+pytak[with_takproto]
