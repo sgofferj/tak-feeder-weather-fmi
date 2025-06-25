@@ -1,6 +1,5 @@
 from fmiopendata.wfs import download_stored_query
 import datetime as dt
-from shapely.geometry import Point
 import math
 
 bbox = "18,60,32,71"
