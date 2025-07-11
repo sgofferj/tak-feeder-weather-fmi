@@ -7,10 +7,11 @@ import pytak
 import getfmi as fmi
 
 COT_URL = os.getenv("COT_URL")
-TAK_PROTO = os.getenv("TAK_PROTO","0")
+TAK_PROTO = os.getenv("TAK_PROTO", "0")
 PYTAK_TLS_CLIENT_CERT = os.getenv("PYTAK_TLS_CLIENT_CERT")
 PYTAK_TLS_CLIENT_KEY = os.getenv("PYTAK_TLS_CLIENT_KEY")
-PYTAK_TLS_DONT_VERIFY = os.getenv("PYTAK_TLS_DONT_VERIFY","1")
+PYTAK_TLS_DONT_VERIFY = os.getenv("PYTAK_TLS_DONT_VERIFY", "1")
+
 
 def weather2cot(sensor):
     uid = f"fmisensor.{sensor["id"]}"
@@ -30,7 +31,7 @@ def weather2cot(sensor):
         "ce": "10",
         "le": "10",
     }
-    
+
     ET.SubElement(root, "point", attrib=pt_attr)
 
     callsign = f"{sensor["name"]}"
@@ -44,6 +45,7 @@ def weather2cot(sensor):
     if not math.isnan(sensor["wd"]):
         remarks.text += f"\nWind direction: {sensor["wd"]}°"
     remarks.text += "\n#weather"
+    remarks.text += "\nSäähavainnot: Ilmatieteenlaitos avoin data, CC-BY 4.0\nWeather observations: Finnish Meteorological Institute open data, CC-BY 4.0"
 
     detail = ET.Element("detail")
     detail.append(contact)
@@ -52,7 +54,7 @@ def weather2cot(sensor):
     root.append(detail)
 
     return ET.tostring(root)
-        
+
 
 class sendWeather(pytak.QueueWorker):
 
@@ -68,7 +70,7 @@ class sendWeather(pytak.QueueWorker):
             sensors = fmi.getweather()
             for sensor in sensors:
                 data += weather2cot(sensor)
-#            self._logger.info("Sent:\n%s\n", data.decode())
+            #            self._logger.info("Sent:\n%s\n", data.decode())
             await self.handle_data(data)
             await asyncio.sleep(60)
 
@@ -80,20 +82,23 @@ async def main():
         "TAK_PROTO": TAK_PROTO,
         "PYTAK_TLS_CLIENT_CERT": PYTAK_TLS_CLIENT_CERT,
         "PYTAK_TLS_CLIENT_KEY": PYTAK_TLS_CLIENT_KEY,
-        "PYTAK_TLS_DONT_VERIFY": PYTAK_TLS_DONT_VERIFY
+        "PYTAK_TLS_DONT_VERIFY": PYTAK_TLS_DONT_VERIFY,
     }
     config = config["mycottool"]
 
     clitool = pytak.CLITool(config)
     await clitool.setup()
 
-    clitool.add_tasks(set([
-        sendWeather(clitool.tx_queue, config),
-    ]))
+    clitool.add_tasks(
+        set(
+            [
+                sendWeather(clitool.tx_queue, config),
+            ]
+        )
+    )
 
     await clitool.run()
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-
