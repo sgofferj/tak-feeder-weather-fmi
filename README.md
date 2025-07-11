@@ -10,11 +10,8 @@ Get latest weather observation data from the Finnish Meteorological Institute an
 Licensed under the GNU General Public License V3 or later.
 
 ## Description
-The Finnish Traffic Authority provides free API access to the AIS data from their receiver network
-which covers most of the Baltic Sea, the Gulf of Finland and inland waters. This container connects
-to the Digitraffic MQTT server and feeds the data to a TAK server. The position data is submitted
-separately from the metadata (ship's name, etc.), so after starting the container, it will take
-some time before all ships are identified and show their proper icons and data.
+The Finnish Meteorological Institute provides free API access to the weather data from their sensor network. This container connects to their WFS server,
+downloads the sensor data and sends it to a TAK server.
 
 ## Configuration
 The following values are supported and can be provided either as environment variables or through an .env-file.
