@@ -44,8 +44,8 @@ def weather2cot(sensor):
         remarks.text += f"\nWind speed: {sensor["ws"]}m/s"
     if not math.isnan(sensor["wd"]):
         remarks.text += f"\nWind direction: {sensor["wd"]}°"
-    remarks.text += "\n#weather"
     remarks.text += "\nSäähavainnot: Ilmatieteenlaitos avoin data, CC-BY 4.0\nWeather observations: Finnish Meteorological Institute open data, CC-BY 4.0"
+    remarks.text += "\n#weather"
 
     detail = ET.Element("detail")
     detail.append(contact)
